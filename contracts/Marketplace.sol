@@ -8,9 +8,9 @@ import "./_external/openzeppelin-upgradable/security/ReentrancyGuardUpgradeable.
 import "./_external/openzeppelin-upgradable/utils/structs/EnumerableSetUpgradeable.sol";
 
 // @title Upgradable Marketplace
-// @author bindle bisu
+// @author diamondyhand
 contract Marketplace is ReentrancyGuardUpgradeable, IERC721ReceiverUpgradeable {
-    uint256 constant RESTZERO = 2**96;
+    uint256 constant RESTZERO = 2 ** 96;
     enum Status {
         STARTED,
         CANCELLED,
@@ -161,7 +161,9 @@ contract Marketplace is ReentrancyGuardUpgradeable, IERC721ReceiverUpgradeable {
      * @notice Cancel auction
      * @param auctionInfoId the id of auction house
      */
-    function cancelAuction(uint256 auctionInfoId)
+    function cancelAuction(
+        uint256 auctionInfoId
+    )
         external
         onlyValidAuction(auctionInfoId)
         onlyAuctionCreator(auctionInfoId)
@@ -188,12 +190,9 @@ contract Marketplace is ReentrancyGuardUpgradeable, IERC721ReceiverUpgradeable {
      * @dev Bid to auction house created by sellTokenAuction or sellMultipleTokenAuction
      * @param auctionInfoId the id of auction house
      */
-    function bidAuction(uint256 auctionInfoId)
-        external
-        payable
-        onlyValidAuction(auctionInfoId)
-        nonReentrant
-    {
+    function bidAuction(
+        uint256 auctionInfoId
+    ) external payable onlyValidAuction(auctionInfoId) nonReentrant {
         require(
             msg.value > auctionInfos[auctionInfoId].topPrice,
             "Need more money"
@@ -216,11 +215,9 @@ contract Marketplace is ReentrancyGuardUpgradeable, IERC721ReceiverUpgradeable {
      * @dev Finish auction house created by sellTokenAuction or sellMultipleTokenAuction
      * @param auctionInfoId the id of auction house
      */
-    function endAuction(uint256 auctionInfoId)
-        external
-        onlyAuctionCreator(auctionInfoId)
-        nonReentrant
-    {
+    function endAuction(
+        uint256 auctionInfoId
+    ) external onlyAuctionCreator(auctionInfoId) nonReentrant {
         Auction storage auctionInfo = auctionInfos[auctionInfoId];
         require(auctionInfo.oStatus == Status.STARTED, "Unavailable auction");
         require(
@@ -269,11 +266,9 @@ contract Marketplace is ReentrancyGuardUpgradeable, IERC721ReceiverUpgradeable {
      * @return tokenAddress
      * @return tokenId
      */
-    function getTokenId(uint256 index)
-        external
-        view
-        returns (address tokenAddress, uint256 tokenId)
-    {
+    function getTokenId(
+        uint256 index
+    ) external view returns (address tokenAddress, uint256 tokenId) {
         require(
             index >= 0 &&
                 index < EnumerableSetUpgradeable.length(availableTokens),
@@ -289,7 +284,9 @@ contract Marketplace is ReentrancyGuardUpgradeable, IERC721ReceiverUpgradeable {
      * @param auctionInfoId the id of auction house
      * @return (address, AuctionToken[], uint, address, uint, Status)
      */
-    function getAuctionInfo(uint256 auctionInfoId)
+    function getAuctionInfo(
+        uint256 auctionInfoId
+    )
         external
         view
         returns (
@@ -333,17 +330,12 @@ contract Marketplace is ReentrancyGuardUpgradeable, IERC721ReceiverUpgradeable {
      * @param purchaseInfoId the id of purchase
      * @return (address, address, uint, uint, uint, Status)
      */
-    function getPurchaseInfo(uint256 purchaseInfoId)
+    function getPurchaseInfo(
+        uint256 purchaseInfoId
+    )
         external
         view
-        returns (
-            address,
-            address,
-            uint256,
-            uint256,
-            uint256,
-            Status
-        )
+        returns (address, address, uint256, uint256, uint256, Status)
     {
         require(
             purchaseInfoId >= 0 && purchaseInfoId < purchaseInfoCnt,
@@ -391,7 +383,9 @@ contract Marketplace is ReentrancyGuardUpgradeable, IERC721ReceiverUpgradeable {
      * @dev Cancel purchase
      * @param purchaseInfoId the id of purchaseInfos
      */
-    function cancelPurchase(uint256 purchaseInfoId)
+    function cancelPurchase(
+        uint256 purchaseInfoId
+    )
         external
         onlyValidPurchase(purchaseInfoId)
         onlyPurchaseCreator(purchaseInfoId)
@@ -406,11 +400,9 @@ contract Marketplace is ReentrancyGuardUpgradeable, IERC721ReceiverUpgradeable {
      * @dev Accept purchase
      * @param purchaseInfoId the id of purchaseInfos
      */
-    function acceptPurchase(uint256 purchaseInfoId)
-        external
-        onlyValidPurchase(purchaseInfoId)
-        nonReentrant
-    {
+    function acceptPurchase(
+        uint256 purchaseInfoId
+    ) external onlyValidPurchase(purchaseInfoId) nonReentrant {
         Purchase storage purchaseInfo = purchaseInfos[purchaseInfoId];
         purchaseInfo.oStatus = Status.FINISHED;
         IERC721Upgradeable(purchaseInfo.tokenAddress).safeTransferFrom(
