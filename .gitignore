@@ -1,0 +1,9 @@
+node_modules
+
+#Hardhat folders
+cache
+artifacts
+coverage
+
+#Hardhat files
+coverage.json
